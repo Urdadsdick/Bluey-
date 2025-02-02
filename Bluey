@@ -1,7 +1,14 @@
--- Load Orion Library
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+-- ✅ Load Orion Library (with error handling)
+local success, OrionLib = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+end)
 
--- Create GUI Window
+if not success then
+    warn("[❌] Failed to load Orion Library! Check your executor.")
+    return
+end
+
+-- ✅ Create GUI Window
 local Window = OrionLib:MakeWindow({
     Name = "😈 Bluey Script 😈",
     HidePremium = false,
@@ -9,39 +16,47 @@ local Window = OrionLib:MakeWindow({
     ConfigFolder = "BlueyConfig"
 })
 
--- Create "Main" Tab
+-- ✅ Create "Main" Tab
 local MainTab = Window:MakeTab({
     Name = "Main",
     Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
 
--- ESP (Wallhack) Function
+-- ✅ ESP (Wallhack) Function (Fixed)
 local function ESP()
     for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
+        if player.Character and not player.Character:FindFirstChild("ESP_Highlight") then
             local highlight = Instance.new("Highlight", player.Character)
-            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red highlight
+            highlight.Name = "ESP_Highlight"
+            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red
             highlight.FillTransparency = 0.5
             highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
         end
     end
+    print("[✅] ESP Activated!")
 end
 
--- Speed Boost Function
+-- ✅ Speed Boost Function (Fixed)
 local function SpeedBoost()
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50 -- Default is 16
+    local player = game.Players.LocalPlayer
+    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = 50 -- Default is 16
+        print("[✅] Speed Boost Activated!")
+    else
+        warn("[❌] Failed to change speed.")
+    end
 end
 
--- Infinite Jump Function
+-- ✅ Infinite Jump (Fixed)
 local InfiniteJumpEnabled = false
 game:GetService("UserInputService").JumpRequest:Connect(function()
-    if InfiniteJumpEnabled then
-        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    if InfiniteJumpEnabled and game.Players.LocalPlayer.Character then
+        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
     end
 end)
 
--- ESP Button
+-- ✅ ESP Button
 MainTab:AddButton({
     Name = "Enable ESP",
     Callback = function()
@@ -55,7 +70,7 @@ MainTab:AddButton({
     end
 })
 
--- Speed Boost Button
+-- ✅ Speed Boost Button
 MainTab:AddButton({
     Name = "Enable Speed Boost",
     Callback = function()
@@ -69,7 +84,7 @@ MainTab:AddButton({
     end
 })
 
--- Infinite Jump Toggle
+-- ✅ Infinite Jump Toggle
 MainTab:AddToggle({
     Name = "Infinite Jump",
     Default = false,
@@ -84,5 +99,6 @@ MainTab:AddToggle({
     end
 })
 
--- Initialize Orion GUI
+-- ✅ Initialize Orion GUI
 OrionLib:Init()
+print("[✅] GUI Loaded Successfully!")
