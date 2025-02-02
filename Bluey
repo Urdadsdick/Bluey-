@@ -1,0 +1,88 @@
+-- Load Orion Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+-- Create GUI Window
+local Window = OrionLib:MakeWindow({
+    Name = "😈 Bluey Script 😈",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "BlueyConfig"
+})
+
+-- Create "Main" Tab
+local MainTab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- ESP (Wallhack) Function
+local function ESP()
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            local highlight = Instance.new("Highlight", player.Character)
+            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red highlight
+            highlight.FillTransparency = 0.5
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        end
+    end
+end
+
+-- Speed Boost Function
+local function SpeedBoost()
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50 -- Default is 16
+end
+
+-- Infinite Jump Function
+local InfiniteJumpEnabled = false
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if InfiniteJumpEnabled then
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- ESP Button
+MainTab:AddButton({
+    Name = "Enable ESP",
+    Callback = function()
+        ESP()
+        OrionLib:MakeNotification({
+            Name = "ESP Enabled",
+            Content = "You can now see players through walls!",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+})
+
+-- Speed Boost Button
+MainTab:AddButton({
+    Name = "Enable Speed Boost",
+    Callback = function()
+        SpeedBoost()
+        OrionLib:MakeNotification({
+            Name = "Speed Boost Activated",
+            Content = "Your walk speed is now increased!",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+})
+
+-- Infinite Jump Toggle
+MainTab:AddToggle({
+    Name = "Infinite Jump",
+    Default = false,
+    Callback = function(Value)
+        InfiniteJumpEnabled = Value
+        OrionLib:MakeNotification({
+            Name = "Infinite Jump",
+            Content = Value and "Enabled" or "Disabled",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+})
+
+-- Initialize Orion GUI
+OrionLib:Init()
